@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gold: #D4AF37;
+  --color-matte-black: #0F0F0F;
+  --color-soft-pink: #FFF0F3;
+  --color-accent-pink: #FF8DA1;
+  --color-lavender: #E6E6FA;
+  --color-mint: #E0FFF4;
+  --color-peach: #FFDAB9;
+  --color-beige: #F5F5DC;
+}
+
+:root {
+  --gold: #D4AF37;
+  --matte-black: #0F0F0F;
+  --soft-pink: #FFF0F3;
+  --accent-pink: #FF8DA1;
+  --lavender: #E6E6FA;
+  --mint: #E0FFF4;
+  --peach: #FFDAB9;
+  --beige: #F5F5DC;
+}
+
+.male-theme {
+  background-color: var(--matte-black);
+  color: var(--gold);
+  font-family: 'Georgia', serif;
+}
+.male-theme .card {
+  border: 1px solid var(--gold);
+  border-radius: 0px;
+  background: #1A1A1A;
+  transition: all 0.3s ease;
+}
+.male-theme .card:hover {
+  box-shadow: 0 0 15px var(--gold);
+  transform: translateY(-2px);
+}
+.male-theme .btn-primary {
+  background: var(--gold);
+  color: black;
+  font-weight: bold;
+}
+.male-theme .text-heading {
+  color: var(--gold);
+  font-family: 'Georgia', serif;
+}
+.male-theme .card-title {
+  color: var(--gold);
+}
+
+.female-theme {
+  background-color: var(--soft-pink);
+  color: #4A4A4A;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+.female-theme .card {
+  border: none;
+  border-radius: 24px;
+  background: white;
+  box-shadow: 0 10px 25px rgba(255, 141, 161, 0.15);
+  transition: all 0.3s ease;
+}
+.female-theme .card:hover {
+  transform: scale(1.03);
+}
+.female-theme .btn-primary {
+  background: var(--accent-pink);
+  color: white;
+  border-radius: 99px;
+}
+.female-theme .text-heading {
+  color: #4A4A4A;
+}
+.female-theme .card-title {
+  color: #4A4A4A;
+}
+
+.toggle-wrapper {
+  background: rgba(128, 128, 128, 0.1);
+  border-radius: 50px;
+  padding: 4px;
+  display: flex;
+  gap: 4px;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.toggle-btn {
+  padding: 8px 24px;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.active-male {
+  background: var(--gold);
+  color: black;
+  font-weight: 800;
+}
+
+.active-female {
+  background: var(--accent-pink);
+  color: white;
+  font-weight: 800;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.male-theme::-webkit-scrollbar-thumb {
+  background: #333;
+}
+
