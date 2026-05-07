@@ -7,6 +7,7 @@ import ProductCard from './components/ProductCard';
 import CartSidebar from './components/CartSidebar';
 import CheckoutModal from './components/CheckoutModal';
 import AuthModal from './components/AuthModal';
+import WishlistSidebar from './components/WishlistSidebar';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 
@@ -23,6 +24,7 @@ export default function App() {
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
@@ -40,9 +42,48 @@ export default function App() {
   });
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
+  const [wishlist, setWishlist] = useState<Shoe[]>(() => {
+    const userKey = user ? user.email : 'guest';
+    const saved = localStorage.getItem(`manpasand_wishlist_${userKey}`);
+    return saved ? JSON.parse(saved) : [];
+  });
+
   useEffect(() => {
     localStorage.setItem('shoe_cart', JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    const userKey = user ? user.email : 'guest';
+    const saved = localStorage.getItem(`manpasand_wishlist_${userKey}`);
+    setWishlist(saved ? JSON.parse(saved) : []);
+  }, [user]);
+
+  useEffect(() => {
+    const userKey = user ? user.email : 'guest';
+    localStorage.setItem(`manpasand_wishlist_${userKey}`, JSON.stringify(wishlist));
+  }, [wishlist, user]);
+
+  const toggleWishlist = (shoe: Shoe) => {
+    setWishlist(prev => {
+       const exists = prev.find(s => s.id === shoe.id);
+       if (exists) {
+         toast.success(`${shoe.name} removed from wishlist`);
+         return prev.filter(s => s.id !== shoe.id);
+       }
+       toast.success(`${shoe.name} added to wishlist`);
+       return [...prev, shoe];
+    });
+  };
+
+  const removeWishlist = (id: string) => {
+    setWishlist(prev => prev.filter(s => s.id !== id));
+    toast.success(`Removed from wishlist`);
+  };
+
+  const moveWishlistToCart = (shoe: Shoe) => {
+    addToCart(shoe);
+    removeWishlist(shoe.id);
+  };
 
   // Reset filters when gender changes
   useEffect(() => {
@@ -137,7 +178,9 @@ export default function App() {
         gender={gender} 
         setGender={setGender} 
         cartCount={cart.reduce((acc, item) => acc + item.quantity, 0)} 
+        wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
+        setIsWishlistOpen={setIsWishlistOpen}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         femaleAccentColor={femaleAccentColor}
@@ -406,6 +449,8 @@ export default function App() {
                 shoe={shoe} 
                 gender={gender} 
                 onAdd={() => addToCart(shoe)} 
+                isWishlisted={wishlist.some(s => s.id === shoe.id)}
+                onToggleWishlist={() => toggleWishlist(shoe)}
                 femaleAccentColor={femaleAccentColor}
               />
             ))}
@@ -437,6 +482,16 @@ export default function App() {
         gender={gender}
         cart={cart}
         onSuccess={() => setCart([])}
+      />
+
+      <WishlistSidebar
+        isOpen={isWishlistOpen}
+        onClose={() => setIsWishlistOpen(false)}
+        wishlist={wishlist}
+        onRemove={removeWishlist}
+        onMoveToCart={moveWishlistToCart}
+        gender={gender}
+        femaleAccentColor={femaleAccentColor}
       />
 
       <AuthModal

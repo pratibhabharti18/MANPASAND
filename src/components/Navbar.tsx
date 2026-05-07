@@ -1,11 +1,13 @@
-import { Search, ShoppingBag, User, LogOut } from 'lucide-react';
+import { Search, ShoppingBag, User, LogOut, Heart } from 'lucide-react';
 import { Gender } from '../data/shoes';
 
 interface NavbarProps {
   gender: Gender;
   setGender: (g: Gender) => void;
   cartCount: number;
+  wishlistCount: number;
   setIsCartOpen: (open: boolean) => void;
+  setIsWishlistOpen: (open: boolean) => void;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
   femaleAccentColor: string;
@@ -14,7 +16,7 @@ interface NavbarProps {
   onLogout: () => void;
 }
 
-export default function Navbar({ gender, setGender, cartCount, setIsCartOpen, searchQuery, setSearchQuery, femaleAccentColor, user, onLoginClick, onLogout }: NavbarProps) {
+export default function Navbar({ gender, setGender, cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, searchQuery, setSearchQuery, femaleAccentColor, user, onLoginClick, onLogout }: NavbarProps) {
   const isMale = gender === 'male';
 
   return (
@@ -79,6 +81,21 @@ export default function Navbar({ gender, setGender, cartCount, setIsCartOpen, se
                 </button>
               )}
               
+              <button 
+                onClick={() => setIsWishlistOpen(true)}
+                className={`p-2 relative transition-colors ${isMale ? 'text-gray-400 hover:text-gold-500' : 'text-gray-600 hover:text-pink-500'}`}
+              >
+                <Heart strokeWidth={1.5} className="w-6 h-6" />
+                {wishlistCount > 0 && (
+                  <span 
+                    className={`absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white rounded-full ${isMale ? 'bg-gold-500 text-black' : ''}`}
+                    style={!isMale ? { backgroundColor: femaleAccentColor } : {}}
+                  >
+                    {wishlistCount}
+                  </span>
+                )}
+              </button>
+
               <button 
                 onClick={() => setIsCartOpen(true)}
                 className={`p-2 relative transition-colors ${isMale ? 'text-gray-400 hover:text-gold-500' : 'text-gray-600 hover:text-gray-900'}`}

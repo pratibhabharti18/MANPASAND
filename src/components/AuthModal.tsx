@@ -42,7 +42,15 @@ export default function AuthModal({ isOpen, onClose, gender, onLogin }: AuthModa
         const newUser = { name, email, password };
         users.push(newUser);
         localStorage.setItem('manpasand_users', JSON.stringify(users));
-        toast.success('Registration successful. You are now logged in!');
+        
+        // Simulate email verification sent
+        toast.success(
+          <span>
+            <b>Registration successful!</b><br/>
+            A confirmation email has been sent to <b>{email}</b>.
+          </span>,
+          { duration: 5000 }
+        );
         onLogin({ name, email });
         onClose();
       }

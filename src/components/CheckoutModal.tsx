@@ -17,24 +17,40 @@ export default function CheckoutModal({ isOpen, onClose, gender, cart, onSuccess
   const isMale = gender === 'male';
   const total = cart.reduce((sum, item) => sum + (item.shoe.price * item.quantity), 0);
   
-  const [step, setStep] = useState<'form' | 'processing' | 'success'>('form');
+  const [step, setStep] = useState<'form' | 'processing' | 'success' | 'upi-payment'>('form');
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'cod'>('upi');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (paymentMethod === 'upi') {
+      setStep('upi-payment');
+    } else {
+      setStep('processing');
+      // Simulate payment success
+      setTimeout(() => {
+        setStep('success');
+        toast.success('Payment Successful!');
+        setTimeout(() => {
+          onSuccess();
+          onClose();
+          // Reset after close animation
+          setTimeout(() => setStep('form'), 500);
+        }, 2500);
+      }, 2000);
+    }
+  };
+
+  const handleUpiSuccess = () => {
     setStep('processing');
-    
-    // Simulate payment success
     setTimeout(() => {
       setStep('success');
-      toast.success('Payment Successful!');
+      toast.success('Payment Verified!');
       setTimeout(() => {
         onSuccess();
         onClose();
-        // Reset after close animation
         setTimeout(() => setStep('form'), 500);
       }, 2500);
-    }, 2000);
+    }, 1500);
   };
 
   return (
@@ -176,6 +192,39 @@ export default function CheckoutModal({ isOpen, onClose, gender, cart, onSuccess
                     Pay ₹{total.toFixed(2)}
                   </button>
                 </form>
+              ) : step === 'upi-payment' ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex flex-col items-center justify-center py-8 text-center"
+                >
+                  <h3 className={`text-xl font-bold mb-4 ${isMale ? 'font-serif text-white' : 'text-gray-900'}`}>
+                    Scan to Pay
+                  </h3>
+                  <div className={`p-4 bg-white rounded-xl shadow-lg border-2 mb-6 flex justify-center ${isMale ? 'border-gold-500/30' : 'border-gray-100'}`}>
+                    <img src="https://files.aistudio.google.com/resources/0eeb762ecdbd44bc8f3c7eaac64ba9bb.jpg" alt="UPI QR Code" className="w-64 h-64 object-contain rounded-lg" referrerPolicy="no-referrer" />
+                  </div>
+                  <p className={`mb-6 ${isMale ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Open any UPI app (GPay, PhonePe, Paytm) to scan and pay <b>₹{total.toFixed(2)}</b>
+                  </p>
+                  <div className="w-full space-y-3">
+                    <button 
+                      onClick={handleUpiSuccess}
+                      className={`w-full py-3 font-semibold rounded-xl flex items-center justify-center gap-2 transition-transform transform hover:scale-[1.02]
+                        ${isMale ? 'bg-indigo-600 text-white hover:bg-indigo-500' : 'bg-pink-500 text-white hover:bg-pink-600 shadow-md'}`}
+                    >
+                      <Smartphone className="w-5 h-5" />
+                      Open UPI App on Mobile
+                    </button>
+                    <button 
+                      onClick={() => setStep('form')}
+                      className={`w-full py-3 font-semibold rounded-xl transition-colors
+                        ${isMale ? 'bg-transparent text-gray-400 hover:text-white border border-gray-700' : 'bg-transparent text-gray-600 hover:bg-gray-100 border border-gray-200'}`}
+                    >
+                      Go Back
+                    </button>
+                  </div>
+                </motion.div>
               ) : step === 'processing' ? (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.8 }}

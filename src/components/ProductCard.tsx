@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Heart } from 'lucide-react';
 import { Shoe, Gender } from '../data/shoes';
 
 interface ProductCardProps {
@@ -7,10 +7,12 @@ interface ProductCardProps {
   shoe: Shoe;
   gender: Gender;
   onAdd: () => void;
+  isWishlisted: boolean;
+  onToggleWishlist: () => void;
   femaleAccentColor: string;
 }
 
-export default function ProductCard({ shoe, gender, onAdd, femaleAccentColor }: ProductCardProps) {
+export default function ProductCard({ shoe, gender, onAdd, isWishlisted, onToggleWishlist, femaleAccentColor }: ProductCardProps) {
   const isMale = gender === 'male';
 
   return (
@@ -30,6 +32,18 @@ export default function ProductCard({ shoe, gender, onAdd, femaleAccentColor }: 
           alt={shoe.name} 
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
+
+        {/* Wishlist Button */}
+        <button
+          onClick={onToggleWishlist}
+          className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-md transition-all shadow-sm z-10 
+            ${isWishlisted 
+              ? (isMale ? 'bg-gold-500/20 text-gold-500 border border-gold-500/30' : 'bg-pink-50 text-pink-500') 
+              : 'bg-white/40 text-gray-700 hover:bg-white'} 
+          `}
+        >
+          <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-current scale-110' : 'scale-100'} transition-transform duration-300`} />
+        </button>
         
         {/* Overlay Add to Cart button (shows on hover for desktop) */}
         <div className={`absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
