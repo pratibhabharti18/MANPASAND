@@ -17,7 +17,7 @@ export default function CheckoutModal({ isOpen, onClose, gender, cart, onSuccess
   const isMale = gender === 'male';
   const total = cart.reduce((sum, item) => sum + (item.shoe.price * item.quantity), 0);
   
-  const [step, setStep] = useState<'form' | 'processing' | 'success' | 'upi-payment'>('form');
+  const [step, setStep] = useState<'form' | 'processing' | 'success' | 'upi-payment' | 'verification'>('form');
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'cod'>('upi');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,7 +29,7 @@ export default function CheckoutModal({ isOpen, onClose, gender, cart, onSuccess
       // Simulate payment success
       setTimeout(() => {
         setStep('success');
-        toast.success('Payment Successful!');
+        toast.success(paymentMethod === 'cod' ? 'Order Placed Successfully!' : 'Payment Successful!');
         setTimeout(() => {
           onSuccess();
           onClose();
@@ -41,16 +41,16 @@ export default function CheckoutModal({ isOpen, onClose, gender, cart, onSuccess
   };
 
   const handleUpiSuccess = () => {
-    setStep('processing');
+    setStep('verification');
     setTimeout(() => {
       setStep('success');
-      toast.success('Payment Verified!');
+      toast.success('Order Placed! Pending Verification.');
       setTimeout(() => {
         onSuccess();
         onClose();
         setTimeout(() => setStep('form'), 500);
-      }, 2500);
-    }, 1500);
+      }, 3000);
+    }, 2500);
   };
 
   return (
@@ -75,7 +75,7 @@ export default function CheckoutModal({ isOpen, onClose, gender, cart, onSuccess
             {/* Header */}
             <div className={`p-6 border-b flex justify-between items-center ${isMale ? 'border-gray-800' : 'border-gray-100'}`}>
               <h2 className={`text-xl font-bold ${isMale ? 'font-serif text-gold-500' : 'text-gray-900'}`}>
-                {step === 'form' ? 'Checkout' : step === 'processing' ? 'Processing Payment' : 'Order Confirmed'}
+                {step === 'form' ? 'Checkout' : step === 'processing' ? 'Processing Payment' : step === 'verification' ? 'Verifying Payment' : 'Order Status'}
               </h2>
               {step === 'form' && (
                 <button onClick={onClose} className={`text-gray-400 hover:text-gray-600 transition-colors`}>
@@ -196,34 +196,55 @@ export default function CheckoutModal({ isOpen, onClose, gender, cart, onSuccess
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="flex flex-col items-center justify-center py-8 text-center"
+                  className="flex flex-col items-center justify-center py-6 text-center"
                 >
                   <h3 className={`text-xl font-bold mb-4 ${isMale ? 'font-serif text-white' : 'text-gray-900'}`}>
-                    Scan to Pay
+                    Scan to Pay via UPI
                   </h3>
-                  <div className={`p-4 bg-white rounded-xl shadow-lg border-2 mb-6 flex justify-center ${isMale ? 'border-gold-500/30' : 'border-gray-100'}`}>
-                    <img src="https://files.aistudio.google.com/resources/0eeb762ecdbd44bc8f3c7eaac64ba9bb.jpg" alt="UPI QR Code" className="w-64 h-64 object-contain rounded-lg" referrerPolicy="no-referrer" />
+                  <div className={`p-4 bg-white rounded-xl shadow-lg border-2 mb-4 flex justify-center ${isMale ? 'border-gold-500/30' : 'border-gray-100'}`}>
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(`upi://pay?pa=7367957720@superyes&pn=MANPASAND SHOES&am=${total.toFixed(2)}&cu=INR`)}&size=224x224`} 
+                      alt="UPI QR Code" 
+                      className="w-56 h-56 object-contain rounded-lg" 
+                    />
                   </div>
-                  <p className={`mb-6 ${isMale ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Open any UPI app (GPay, PhonePe, Paytm) to scan and pay <b>₹{total.toFixed(2)}</b>
-                  </p>
+                  
+                  <div className={`space-y-1 mb-6 text-sm flex flex-col items-center ${isMale ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <p>Merchant Name: <b className={isMale ? 'text-white' : 'text-black'}>MANPASAND SHOES</b></p>
+                    <p>UPI ID: <b className={isMale ? 'text-white' : 'text-black'}>7367957720@superyes</b></p>
+                    <p className="text-lg mt-2 font-medium">Amount to Pay: <b className={isMale ? 'text-gold-500' : 'text-pink-600'}>₹{total.toFixed(2)}</b></p>
+                  </div>
+
                   <div className="w-full space-y-3">
                     <button 
                       onClick={handleUpiSuccess}
                       className={`w-full py-3 font-semibold rounded-xl flex items-center justify-center gap-2 transition-transform transform hover:scale-[1.02]
-                        ${isMale ? 'bg-indigo-600 text-white hover:bg-indigo-500' : 'bg-pink-500 text-white hover:bg-pink-600 shadow-md'}`}
+                        ${isMale ? 'bg-gold-500 text-black hover:bg-gold-400' : 'bg-pink-500 text-white hover:bg-pink-600 shadow-md'}`}
                     >
-                      <Smartphone className="w-5 h-5" />
-                      Open UPI App on Mobile
+                      I Have Paid
                     </button>
                     <button 
                       onClick={() => setStep('form')}
                       className={`w-full py-3 font-semibold rounded-xl transition-colors
                         ${isMale ? 'bg-transparent text-gray-400 hover:text-white border border-gray-700' : 'bg-transparent text-gray-600 hover:bg-gray-100 border border-gray-200'}`}
                     >
-                      Go Back
+                      Cancel Payment
                     </button>
                   </div>
+                </motion.div>
+              ) : step === 'verification' ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex flex-col items-center justify-center py-12 text-center"
+                >
+                  <div className={`w-16 h-16 border-4 border-t-transparent rounded-full animate-spin mb-6 ${isMale ? 'border-gold-500' : 'border-gray-900'}`}></div>
+                  <h3 className={`text-xl font-bold mb-2 ${isMale ? 'font-serif text-white' : 'text-gray-900'}`}>
+                    Payment Under Verification...
+                  </h3>
+                  <p className={isMale ? 'text-gray-500' : 'text-gray-500'}>
+                    Please wait while we confirm your payment.
+                  </p>
                 </motion.div>
               ) : step === 'processing' ? (
                 <motion.div 
@@ -252,6 +273,11 @@ export default function CheckoutModal({ isOpen, onClose, gender, cart, onSuccess
                   <p className={isMale ? 'text-gray-500' : 'text-gray-500'}>
                     A confirmation email has been sent to you.
                   </p>
+                  {paymentMethod === 'upi' && (
+                    <p className={`mt-2 font-medium ${isMale ? 'text-gold-500' : 'text-pink-600'}`}>
+                      Status: Pending Payment Verification
+                    </p>
+                  )}
                 </motion.div>
               )}
             </div>

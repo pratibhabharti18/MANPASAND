@@ -40,7 +40,7 @@ export default function CartSidebar({ isOpen, onClose, cart, updateQuantity, gen
               ${isMale ? 'bg-black-matte border-l border-gray-800' : 'bg-white'}`}
           >
             {/* Header */}
-            <div className={`p-6 flex items-center justify-between border-b ${isMale ? 'border-gray-800' : 'border-gray-100'}`}>
+            <div className={`p-6 flex items-center shrink-0 justify-between border-b ${isMale ? 'border-gray-800' : 'border-gray-100'}`}>
               <h2 className={`text-xl font-bold ${isMale ? 'font-serif text-gold-500' : 'text-gray-900'}`}>
                 Your Cart
               </h2>
@@ -120,7 +120,7 @@ export default function CartSidebar({ isOpen, onClose, cart, updateQuantity, gen
 
             {/* Footer */}
             {cart.length > 0 && (
-              <div className={`p-6 border-t ${isMale ? 'border-gray-800 bg-black' : 'border-gray-100 bg-white'}`}>
+              <div className={`p-6 border-t shrink-0 ${isMale ? 'border-gray-800 bg-black' : 'border-gray-100 bg-white'}`}>
                 <div className="flex justify-between items-center mb-6">
                   <span className={`text-gray-500 font-medium`}>Subtotal</span>
                   <span className={`text-2xl font-bold ${isMale ? 'text-gold-500' : 'text-gray-900'}`}>

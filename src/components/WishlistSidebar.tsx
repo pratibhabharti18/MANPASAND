@@ -38,7 +38,7 @@ export default function WishlistSidebar({ isOpen, onClose, wishlist, onRemove, o
               ${isMale ? 'bg-black-matte border-l border-gray-800' : 'bg-white'}`}
           >
             {/* Header */}
-            <div className={`p-6 flex items-center justify-between border-b ${isMale ? 'border-gray-800' : 'border-gray-100'}`}>
+            <div className={`p-6 flex items-center shrink-0 justify-between border-b ${isMale ? 'border-gray-800' : 'border-gray-100'}`}>
               <h2 className={`text-xl font-bold flex items-center gap-2 ${isMale ? 'font-serif text-gold-500' : 'text-gray-900'}`}>
                 <Heart className="w-5 h-5 fill-current" />
                 Your Wishlist
